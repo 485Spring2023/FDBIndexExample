@@ -91,6 +91,7 @@ public class SimpleIndexExample {
 
         if (isUsingClusterHashIndex) {
             // using cluster hash index
+            System.out.println("Build Cluster Hash Index on Employee Table, Attribute: [" + targetAttrToBuildIndex + "], search for value \"" + targetAttrValue +"\"");
             List<ClusterHashIndexRecord> clusterHashIndexRecords = HashIndexes.buildClusterHashIndex(employees, targetAttrToBuildIndex);
 
             // persist the index records to FDB
@@ -148,6 +149,7 @@ public class SimpleIndexExample {
             }
         } else {
             // using non-cluster hash index
+            System.out.println("Build Non-Cluster Hash Index on Employee Table, Attribute: [" + targetAttrToBuildIndex + "], search for value \"" + targetAttrValue +"\"");
 
             // load employee dataset first
             for (Employee e : employees) {
