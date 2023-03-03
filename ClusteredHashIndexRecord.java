@@ -1,6 +1,6 @@
 import com.apple.foundationdb.tuple.Tuple;
 
-public class ClusterHashIndexRecord {
+public class ClusteredHashIndexRecord {
   public static String INDEX_TYPE = "HashCluster";
 
   private String tableName;
@@ -67,7 +67,7 @@ public class ClusterHashIndexRecord {
     this.attrValue = attrValue;
   }
 
-  public ClusterHashIndexRecord(String tableName, String hashAttrName, Long hashValue, Long pkValue, String attrName, Object attrValue) {
+  public ClusteredHashIndexRecord(String tableName, String hashAttrName, Long hashValue, Long pkValue, String attrName, Object attrValue) {
     this.tableName = tableName;
     this.indexType = INDEX_TYPE;
     this.hashAttrName = hashAttrName;

@@ -1,6 +1,6 @@
 import com.apple.foundationdb.tuple.Tuple;
 
-public class NonClusterHashIndexRecord {
+public class NonClusteredHashIndexRecord {
 
   public static String INDEX_TYPE = "HashNonCluster";
 
@@ -51,7 +51,7 @@ public class NonClusterHashIndexRecord {
     this.pkValue = pkValue;
   }
 
-  public NonClusterHashIndexRecord(String tableName, String hashAttrName, Long hashValue, Long pkValue) {
+  public NonClusteredHashIndexRecord(String tableName, String hashAttrName, Long hashValue, Long pkValue) {
     this.tableName = tableName;
     this.indexType = INDEX_TYPE;
     this.hashAttrName = hashAttrName;
@@ -59,7 +59,7 @@ public class NonClusterHashIndexRecord {
     this.pkValue = pkValue;
   }
 
-  public NonClusterHashIndexRecord(Tuple keyTuple) {
+  public NonClusteredHashIndexRecord(Tuple keyTuple) {
     this.tableName = (String) keyTuple.get(0);
     this.indexType = (String) keyTuple.get(1);
     this.hashAttrName = (String) keyTuple.get(2);

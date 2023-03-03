@@ -92,17 +92,17 @@ public class SimpleIndexExample {
         if (isUsingClusterHashIndex) {
             // using cluster hash index
             System.out.println("Build Cluster Hash Index on Employee Table, Attribute: [" + targetAttrToBuildIndex + "], search for value \"" + targetAttrValue +"\"");
-            List<ClusterHashIndexRecord> clusterHashIndexRecords = HashIndexes.buildClusterHashIndex(employees, targetAttrToBuildIndex);
+            List<ClusteredHashIndexRecord> clusterHashIndexRecords = HashIndexes.buildClusteredHashIndex(employees, targetAttrToBuildIndex);
 
             // persist the index records to FDB
             Transaction tx = FDBHelper.openTransaction(db);
-            for (ClusterHashIndexRecord record : clusterHashIndexRecords) {
+            for (ClusteredHashIndexRecord record : clusterHashIndexRecords) {
                 FDBHelper.putKVPair(tx, employeeTable, record.getKeyTuple(), record.getValueTuple());
             }
             FDBHelper.commitTransaction(tx);
 
             // get all the key-value pairs with prefix(Employee, NonClusterHashIndex, Name, HashVal)
-            Tuple queryPrefix = ClusterHashIndexRecord.getPrefixQueryTuple(Employee.EMPLOYEE_TABLENAME, targetAttrToBuildIndex, targetAttrHashValue);
+            Tuple queryPrefix = ClusteredHashIndexRecord.getPrefixQueryTuple(Employee.EMPLOYEE_TABLENAME, targetAttrToBuildIndex, targetAttrHashValue);
             List<KeyValue> indexKVPairs = FDBHelper.getPrefixKVPairs(db, employeeTable, queryPrefix);
 
             Employee e = new Employee();
@@ -116,8 +116,8 @@ public class SimpleIndexExample {
                 Tuple val = Tuple.fromBytes(kv.getValue());
 
                 // extract the primary key, attribute name from the key; attribute value from the val
-                long primaryKey = (long) ClusterHashIndexRecord.getPrimaryKeyFromKeyTuple(key);
-                String attrName = (String) ClusterHashIndexRecord.getAttributeNameFromKeyTuple(key);
+                long primaryKey = (long) ClusteredHashIndexRecord.getPrimaryKeyFromKeyTuple(key);
+                String attrName = (String) ClusteredHashIndexRecord.getAttributeNameFromKeyTuple(key);
                 Object attrVal = val.get(0);
 
 
@@ -168,27 +168,27 @@ public class SimpleIndexExample {
             System.out.println("Finish initialization of Employee Table.");
 
             // generate the non-cluster hash index records
-            List<NonClusterHashIndexRecord> nonClusterHashIndexRecords = HashIndexes.buildNonClusterHashIndex(employees, targetAttrToBuildIndex);
+            List<NonClusteredHashIndexRecord> nonClusteredHashIndexRecords = HashIndexes.buildNonClusteredHashIndex(employees, targetAttrToBuildIndex);
             Transaction tx = FDBHelper.openTransaction(db);
             // persist the non-cluster hash index to FDB
-            for (NonClusterHashIndexRecord record : nonClusterHashIndexRecords) {
+            for (NonClusteredHashIndexRecord record : nonClusteredHashIndexRecords) {
                 FDBHelper.putKVPair(tx, employeeTable, record.getKeyTuple(), record.getValueTuple());
             }
             FDBHelper.commitTransaction(tx);
 
             // get all the key-value pairs with prefix(Employee, NonClusterHashIndex, Name, HashVal)
-            Tuple queryPrefix = NonClusterHashIndexRecord.getPrefixQueryTuple(Employee.EMPLOYEE_TABLENAME, targetAttrToBuildIndex, targetAttrHashValue);
+            Tuple queryPrefix = NonClusteredHashIndexRecord.getPrefixQueryTuple(Employee.EMPLOYEE_TABLENAME, targetAttrToBuildIndex, targetAttrHashValue);
             List<KeyValue> indexKVPairs = FDBHelper.getPrefixKVPairs(db, employeeTable, queryPrefix);
 
             // interpret the key-value pairs into index records
-            List<NonClusterHashIndexRecord> indexRecords = new ArrayList<>();
+            List<NonClusteredHashIndexRecord> indexRecords = new ArrayList<>();
             for (KeyValue kv : indexKVPairs) {
                 Tuple keyTuple = employeeTable.unpack(kv.getKey());
-                indexRecords.add(new NonClusterHashIndexRecord(keyTuple));
+                indexRecords.add(new NonClusteredHashIndexRecord(keyTuple));
             }
 
             // for each index record,
-            for (NonClusterHashIndexRecord record : indexRecords) {
+            for (NonClusteredHashIndexRecord record : indexRecords) {
                 try {
                     // get the primary key from it
                     Long pkVal = record.getPkValue();
